@@ -23,7 +23,7 @@ namespace Villa.Web.Controllers
         [HttpPost]
         public IActionResult Create(Room obj)
         {
-            if(obj.Name==obj.Description)
+            if (obj.Name == obj.Description)
             {
                 ModelState.AddModelError("Name", "Name and Description should not be same");
             }
@@ -31,17 +31,21 @@ namespace Villa.Web.Controllers
             {
                 _context.Villas.Add(obj);
                 _context.SaveChanges();
+                TempData["Success"] = "Villa Created Successfully";
                 return RedirectToAction("Index");
             }
+            TempData["Error"] = "Villa Creation Failed";
             return View(obj);
 
         }
         public IActionResult Update(int villaId)
         {
-            
+
             var villaInfo = _context.Villas.FirstOrDefault(v => v.Id == villaId);
-            if(villaInfo is null)
+            if (villaInfo is null)
             {
+                TempData["Error"] = "Villa Not Found";
+
                 return RedirectToAction("Error", "Home");
             }
             return View(villaInfo);
@@ -49,24 +53,25 @@ namespace Villa.Web.Controllers
         [HttpPost]
         public IActionResult Update(Room obj)
         {
-            if(obj.Name==obj.Description)
+            if (obj.Name == obj.Description)
             {
                 ModelState.AddModelError("Name", "Name and Description can't be same");
             }
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 _context.Villas.Update(obj);
                 _context.SaveChanges();
+                TempData["Success"] = "Villa Updated Successfully";
                 return RedirectToAction("Index");
             }
-            else
-                return View(obj);
+            TempData["Error"] = "Villa Updated Failed";
+            return View(obj);
         }
         [HttpGet]
         public IActionResult Delete(int villaId)
         {
             var villaObj = _context.Villas.FirstOrDefault(v => v.Id == villaId);
-            if(villaObj is null)
+            if (villaObj is null)
             {
                 return RedirectToAction("Error", "Home");
             }
@@ -76,15 +81,15 @@ namespace Villa.Web.Controllers
         public IActionResult DeletePost(int id)
         {
             var villaObj = _context.Villas.FirstOrDefault(v => v.Id == id);
-            if(villaObj is null)
+            if (villaObj is null)
             {
+                TempData["Error"] = "Villa Not found";
                 return RedirectToAction("Error", "Home");
             }
-           _context.Villas.Remove(villaObj);
-           _context.SaveChanges();
+            _context.Villas.Remove(villaObj);
+            _context.SaveChanges();
+            TempData["Success"] = "Villa Delted Successfully";
             return RedirectToAction("Index");
-          
-
         }
 
     }
