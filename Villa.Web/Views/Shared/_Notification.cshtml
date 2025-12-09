@@ -1,0 +1,27 @@
+﻿<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script type="text/javascript">
+    // Optional: Configure Toastr options (makes it look better)
+    toastr.options = {
+        "closeButton": true,
+        "progressBar": true,
+        "positionClass": "toast-top-right", // You can change this to toast-bottom-right
+        "timeOut": "5000", // Disappears after 5 seconds
+    };
+
+    // Check for Error
+    @if (TempData["Error"] != null)
+    {
+            <text>
+                toastr.error('@TempData["Error"]');
+            </text>
+    }
+
+    // Check for Success
+    @if (TempData["Success"] != null)
+    {
+            <text>
+                toastr.success('@TempData["Success"]');
+            </text>
+    }
+</script>
