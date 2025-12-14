@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -15,6 +16,7 @@ namespace Villa.Domain.Entities
         public int Villa_Number { get; set; }
         public string? SpecialDetails { get; set; }
         public int VillaId { get; set; }
+        [ValidateNever]
         public Room Room { get; set; }
 
     }

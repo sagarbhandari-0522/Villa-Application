@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Villa.Domain.Entities;
 using Villa.Infrastructure.Data;
+using Villa.Web.Helpers;
+using Villa.Web.ViewModels;
 
 namespace Villa.Web.Controllers
 {
@@ -21,22 +23,27 @@ namespace Villa.Web.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(Room obj)
+        public IActionResult Create(CreateVillaVM obj)
         {
-            if (obj.Name == obj.Description)
+            VillaValidator.Validate(obj.Name, obj.Description, ModelState);
+            if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("Name", "Name and Description should not be same");
+                TempData["Error"] = "Villa Creation Failed";
+                return View(obj);
             }
-            if (ModelState.IsValid)
+            var villa = new Room()
             {
-                _context.Villas.Add(obj);
-                _context.SaveChanges();
-                TempData["Success"] = "Villa Created Successfully";
-                return RedirectToAction("Index");
-            }
-            TempData["Error"] = "Villa Creation Failed";
-            return View(obj);
-
+                Name = obj.Name,
+                Description = obj.Description,
+                Price = obj.Price,
+                Sqft = obj.Sqft,
+                Occupancy = obj.Occupancy,
+                ImageUrl = obj.ImageUrl
+            };
+            _context.Villas.Add(villa);
+            _context.SaveChanges();
+            TempData["Success"] = "Villa Created Successfully";
+            return RedirectToAction("Index");
         }
         public IActionResult Update(int villaId)
         {
@@ -53,10 +60,7 @@ namespace Villa.Web.Controllers
         [HttpPost]
         public IActionResult Update(Room obj)
         {
-            if (obj.Name == obj.Description)
-            {
-                ModelState.AddModelError("Name", "Name and Description can't be same");
-            }
+            VillaValidator.Validate(obj.Name,obj.Description,ModelState);
             if (ModelState.IsValid)
             {
                 _context.Villas.Update(obj);
