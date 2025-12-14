@@ -10,7 +10,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options=>
     options.UseSqlServer(connectionString));
 
 var app = builder.Build();
-
+if(app.Environment.IsDevelopment())
+{
+    using(var scope=app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        DbInitializer.Seed(context);
+    }
+}
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
