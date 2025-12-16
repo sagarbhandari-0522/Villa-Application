@@ -16,7 +16,7 @@ namespace Villa.Web.Controllers
         }
         public IActionResult Index()
         {
-            var villaNumbers = _context.VillaNumbers.Include(vn => vn.Room).ToList();
+            var villaNumbers =_context.VillaNumbers.Include(vn => vn.Room).ToList();
             return View(villaNumbers);
         }
         public IActionResult Create()
