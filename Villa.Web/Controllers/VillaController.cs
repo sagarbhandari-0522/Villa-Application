@@ -11,14 +11,16 @@ namespace Villa.Web.Controllers
     public class VillaController : Controller
     {
 
-        private IRoomRepository _roomRepository;
-        public VillaController(ApplicationDbContext context, IRoomRepository roomRepository)
+        private readonly IUnitOfWork _unitOfWork;
+        public VillaController( IUnitOfWork unitOfWork)
         {
-            _roomRepository = roomRepository;
+            _unitOfWork = unitOfWork;
         }
+
+
         public IActionResult Index()
         {
-            var villas = _roomRepository.GetAll(includeProperties: [v => v.VillaNumbers]);
+            var villas = _unitOfWork.roomRepository.GetAll(includeProperties: [v => v.VillaNumbers]);
             return View(villas);
         }
         public IActionResult Create()
@@ -43,13 +45,14 @@ namespace Villa.Web.Controllers
                 Occupancy = obj.Occupancy,
                 ImageUrl = obj.ImageUrl
             };
-            _roomRepository.Add(villa);
+            _unitOfWork.roomRepository.Add(villa);
+            _unitOfWork.Commit();
             TempData["Success"] = "Villa Created Successfully";
             return RedirectToAction("Index");
         }
         public IActionResult Update(int villaId)
         {
-            var villaInfo = _roomRepository.GetById(villaId);
+            var villaInfo = _unitOfWork.roomRepository.GetSingle(v => v.Id == villaId);
             if (villaInfo is null)
             {
                 TempData["Error"] = "Villa Not Found";
@@ -64,7 +67,8 @@ namespace Villa.Web.Controllers
             VillaValidator.Validate(obj.Name, obj.Description, ModelState);
             if (ModelState.IsValid)
             {
-                _roomRepository.Update(obj);
+                _unitOfWork.roomRepository.Update(obj);
+                _unitOfWork.Commit();
                 TempData["Success"] = "Villa Updated Successfully";
                 return RedirectToAction("Index");
             }
@@ -74,7 +78,7 @@ namespace Villa.Web.Controllers
         [HttpGet]
         public IActionResult Delete(int villaId)
         {
-            var villaObj = _roomRepository.GetById(villaId);
+            var villaObj = _unitOfWork.roomRepository.GetSingle(v => v.Id == villaId);
             if (villaObj is null)
             {
                 return RedirectToAction("Error", "Home");
@@ -84,13 +88,14 @@ namespace Villa.Web.Controllers
         [HttpPost, ActionName("Delete")]
         public IActionResult DeletePost(int id)
         {
-            var villaObj = _roomRepository.GetById(id);
+            var villaObj = _unitOfWork.roomRepository.GetSingle(v => v.Id == id);
             if (villaObj is null)
             {
                 TempData["Error"] = "Villa Not found";
                 return RedirectToAction("Error", "Home");
             }
-            _roomRepository.Remove(villaObj);
+            _unitOfWork.roomRepository.Remove(villaObj);
+            _unitOfWork.Commit();
             TempData["Success"] = "Villa Delted Successfully";
             return RedirectToAction("Index");
         }
