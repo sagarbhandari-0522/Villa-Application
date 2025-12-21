@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Villa.Application.Interface;
 using Villa.Infrastructure.Data;
+using Villa.Infrastructure.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +10,7 @@ builder.Services.AddControllersWithViews();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options=>
     options.UseSqlServer(connectionString));
-
+builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 var app = builder.Build();
 if(app.Environment.IsDevelopment())
 {
