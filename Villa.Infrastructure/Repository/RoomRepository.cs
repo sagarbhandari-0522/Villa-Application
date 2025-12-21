@@ -39,8 +39,7 @@ namespace Villa.Infrastructure.Repository
         
         public IEnumerable<IdNameDto> LoadVillaList()
         {
-           return _context.Villas.Select(v => new IdNameDto { Id =v.Id, Name =v.Name }).ToList();
-            //return (_context.Villas.Select(sl => new SelectListItem { Text = sl.Name, Value = sl.Id.ToString() }).ToList());
+            return _context.Villas.Select(v => new IdNameDto { Id = v.Id, Name = v.Name });
         }
 
     }

@@ -10,8 +10,7 @@ builder.Services.AddControllersWithViews();
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options=>
     options.UseSqlServer(connectionString));
-builder.Services.AddScoped<IRoomRepository, RoomRepository>();
-
+builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
 var app = builder.Build();
 if(app.Environment.IsDevelopment())
 {
